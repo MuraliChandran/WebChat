@@ -9,18 +9,31 @@
       <ng-container *ngFor="let m of messages">
         <div
           class="chat-message"
-          [class.chat-message-received]="m.type === 'received'"
+          [class.chat-message-received]="m.source === 'received'"
           [@fadeIn]
-          [class.chat-message-sent]="m.type === 'sent'"
+          [class.chat-message-sent]="m.source === 'sent'"
         >
           <div>
             <app-chat-avatar
               [image]="m.from.avatar"
               class="chat-message-from-avatar"
             ></app-chat-avatar>
-            <div class="chat-message-text">
-              {{ m.message }}
-            </div>
+            <ng-container
+              *ngIf="m.type === 'text'; then disptext; else dispimage"
+            >
+            </ng-container>
+
+            <ng-template #disptext>
+              <div class="chat-message-text">
+                {{ m.message }}
+              </div>
+            </ng-template>
+
+            <ng-template #dispimage>
+              <div >
+                <img [attr.src]="image" class="chat-message-from-Image" />
+              </div>
+            </ng-template>
           </div>
 
           <div class="chat-message-date">

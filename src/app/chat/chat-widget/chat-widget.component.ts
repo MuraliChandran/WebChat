@@ -1,14 +1,14 @@
-import { Component, OnInit, Input } from '@angular/core';
+import { Component, OnInit, Input, ViewChild, ElementRef } from '@angular/core';
 import { fadeIn, fadeInOut } from '../animation';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { ChatServicesService } from '../chat-services/chat-services.service';
+import { query } from '@angular/animations';
 
 const httpOptions = {
   headers: new HttpHeaders({
     'Content-Type': 'application/json',
   }),
 };
-
 
 const rand = (max) => Math.floor(Math.random() * max);
 
@@ -29,8 +29,9 @@ export class ChatWidgetComponent implements OnInit {
   };
 
   public messages = [];
-  
-  val = []
+
+  public val = [];
+
   public get visible() {
     return this._visible;
   }
@@ -42,6 +43,10 @@ export class ChatWidgetComponent implements OnInit {
     }
   }
 
+  @Input() public image: string;
+
+  i = 'https://i.imgur.com/nGF1K8f.jpg';
+
   constructor(
     public httpClient: HttpClient,
     private chatservice: ChatServicesService
@@ -50,20 +55,31 @@ export class ChatWidgetComponent implements OnInit {
   ngOnInit(): void {
     setTimeout(() => (this.visible = true), 1000);
     setTimeout(() => {
-      this.addMessage(this.sender, 'Hi, how can we help you?', 'received');
+      this.addMessage(
+        this.sender,
+        'Hi, how can we help you?',
+        'received',
+        'text'
+      );
     }, 1500);
   }
 
-  public botMessage(message) {
-    this.addMessage(this.sender, message, 'received');
+  public botMessage(message, text) {
+    if (text !== 'image') {
+      this.addMessage(this.sender, message, 'received', text);
+    } else {
+      this.image = message;
+      this.addMessage(this.sender, this.image, 'received', text);
+    }
   }
 
-  public addMessage(from, message, type) {
+  public addMessage(from, message, source, type) {
     this.messages.unshift({
       from,
       message,
-      type,
+      source,
       date: new Date().getTime(),
+      type,
     });
   }
 
@@ -76,16 +92,29 @@ export class ChatWidgetComponent implements OnInit {
     }
 
     //User Message
-    this.addMessage(this.client, message, 'sent');
+    this.addMessage(this.client, message, 'sent', 'text');
 
     this.chatservice.botMessageRequest(message).subscribe((res) => {
-      console.log("res", res);
-      this.val = JSON.parse(res.toString());
-      console.log('Val', this.val[0].text);
-    });
+      console.log('res', res);
+      this.val = JSON.parse(res);
+      console.log('val', this.val);
+      for (var key in this.val) {
+        console.log('Key: ' + key);
 
-    //Bot will respond back
-    setTimeout(() => this.botMessage(this.val[0].text), 1000);
+        //Bot will respond back
+        if (this.val[key].text) {
+          console.log('Text' + this.val[key].text);
+
+          this.botMessage(this.val[key].text, 'text');
+        } else if (this.val[key].image) {
+          console.log('Image' + this.val[key].image);
+
+          this.botMessage(this.val[key].image, 'image');
+        } else {
+          console.log('not working');
+        }
+      }
+    });
   }
 
   toggleChat() {
