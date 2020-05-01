@@ -7,6 +7,7 @@ import { ChatWidgetComponent } from './chat/chat-widget/chat-widget.component';
 import { ChatInputComponent } from './chat/chat-input/chat-input.component';
 import { ChatAvatarComponent } from './chat/chat-avatar/chat-avatar.component';
 import { HttpClientModule } from '@angular/common/http';
+import { MatButtonModule } from '@angular/material/button';
 
 @NgModule({
   declarations: [
@@ -19,7 +20,8 @@ import { HttpClientModule } from '@angular/common/http';
     BrowserModule,
     AppRoutingModule,
     BrowserAnimationsModule,
-    HttpClientModule
+    HttpClientModule,
+    MatButtonModule
   ],
   providers: [],
   bootstrap: [AppComponent]

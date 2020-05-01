@@ -17,14 +17,17 @@ export class ChatServicesService {
   constructor(private httpClient: HttpClient) {}
 
   url: string = 'http://localhost:5005/webhooks/rest/webhook';
-
+  data;
   botMessageRequest(m: any): Observable<any> {
-    const data = JSON.stringify({
+   
+
+    this.data = JSON.stringify({
       sender: 'User',
       message: m,
     });
-
-    return this.httpClient.post<any>(this.url, data, httpOptions).pipe(
+       
+    console.log("Data", this.data);
+    return this.httpClient.post<any>(this.url, this.data, httpOptions).pipe(
       map((res) => {
         console.log('service', res);
         return JSON.stringify(res);

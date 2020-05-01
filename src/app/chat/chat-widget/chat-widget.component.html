@@ -6,6 +6,7 @@
 
     <div class="chat-box-main">
       <div class="chat-message-bottom" #bottom></div>
+
       <ng-container *ngFor="let m of messages">
         <div
           class="chat-message"
@@ -18,23 +19,29 @@
               [image]="m.from.avatar"
               class="chat-message-from-avatar"
             ></app-chat-avatar>
-            <ng-container
-              *ngIf="m.type === 'text'; then disptext; else dispimage"
-            >
-            </ng-container>
 
-            <ng-template #disptext>
+            <div *ngIf="m.type === 'text'">
               <div class="chat-message-text">
                 {{ m.message }}
               </div>
-            </ng-template>
+            </div>
 
-            <ng-template #dispimage>
-              <div >
+            <div *ngIf="m.type === 'image'">
+              <div>
                 <img [attr.src]="image" class="chat-message-from-Image" />
               </div>
-            </ng-template>
+            </div>
           </div>
+
+          <ng-container *ngIf="m.buttons === true" #mydiv>
+            <div *ngFor="let b of BT">
+              <div class="button-row" #mydiv>
+                <button mat-raised-button color="blue" (click)="buttonclick($event)">
+                  {{ b.title.title }}
+                </button>
+              </div>
+            </div>
+          </ng-container>
 
           <div class="chat-message-date">
             {{ m.date | date: "short" }}
