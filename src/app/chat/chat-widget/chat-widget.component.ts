@@ -3,7 +3,6 @@ import { fadeIn, fadeInOut } from '../animation';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { ChatServicesService } from '../chat-services/chat-services.service';
 
-
 const rand = (max) => Math.floor(Math.random() * max);
 
 @Component({
@@ -99,12 +98,22 @@ export class ChatWidgetComponent implements OnInit {
   buttonclick($event: Event) {
     var a = $event.srcElement as HTMLElement;
 
+    console.log("a", a.innerText)
+    var b = a.innerText.replace(/ +/g,"");
+    console.log("b", b)
     //To find the right Payload.
     var payloadval: any;
-    for (var i = 0; i < this.BT.length; i++)
-      if (this.BT[i].title.title === a.innerText)
+    for (var i = 0; i < this.BT.length; i++){
+      var c =  this.BT[i].title.title.replace(/(\r\n|\n|\r)/gm,"");
+      console.log("c",c)
+      if (c.includes(b)){
         payloadval = this.BT[i].title.payload;
-
+        console.log("payloadval", payloadval);
+      }
+    }
+    console.log("payloadval",payloadval);
+    
+    
     //return empty strings
     if (a.innerText.trim() === '') return;
 
@@ -129,16 +138,16 @@ export class ChatWidgetComponent implements OnInit {
       for (var key in this.val) {
         //Bot will respond back
         if (this.val[key].text) {
-          this.botMessage(this.val[key].text, 'text', false);
-
           if (this.val[key].buttons) {
             this.botMessage(this.val[key].text, 'text', true);
-
             for (var k in this.val[key].buttons) {
               this.addBT(this.val[key].buttons[k]);
             }
+          } else {
+            this.botMessage(this.val[key].text, 'text', false);
           }
         }
+
         if (this.val[key].image) {
           this.botMessage(this.val[key].image, 'image', false);
         } else {

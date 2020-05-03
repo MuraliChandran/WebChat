@@ -35,8 +35,8 @@
 
           <ng-container *ngIf="m.buttons === true" #mydiv>
             <div *ngFor="let b of BT">
-              <div class="button-row" #mydiv>
-                <button mat-raised-button color="blue" (click)="buttonclick($event)">
+              <div  #mydiv>
+                <button mat-raised-button color="warn" (click)="buttonclick($event)" class="button-row">
                   {{ b.title.title }}
                 </button>
               </div>
