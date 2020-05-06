@@ -23,9 +23,11 @@ export class ChatWidgetComponent implements OnInit {
 
   public messages = [];
   public BT = [];
+  public result = [];
   a: string;
   public val = [];
 
+  count = 0;
   public get visible() {
     return this._visible;
   }
@@ -93,31 +95,33 @@ export class ChatWidgetComponent implements OnInit {
 
   addBT(title: any) {
     this.BT.push({ title });
+
+    //Get Disctinct Buttons
+    this.DistinctButtons(this.BT);
   }
 
   buttonclick($event: Event) {
     var a = $event.srcElement as HTMLElement;
 
-    console.log("a", a.innerText)
-    var b = a.innerText.replace(/ +/g,"");
-    console.log("b", b)
+    console.log('a', a.innerText);
+    var b = a.innerText.replace(/ +/g, '');
+    console.log('b', b);
     //To find the right Payload.
     var payloadval: any;
-    for (var i = 0; i < this.BT.length; i++){
-      var c =  this.BT[i].title.title.replace(/(\r\n|\n|\r)/gm,"");
-      console.log("c",c)
-      if (c.includes(b)){
+    for (var i = 0; i < this.BT.length; i++) {
+      var c = this.BT[i].title.title.replace(/(\r\n|\n|\r)/gm, '');
+      console.log('c', c);
+      if (c.includes(b)) {
         payloadval = this.BT[i].title.payload;
-        console.log("payloadval", payloadval);
+        console.log('payloadval', payloadval);
       }
     }
-    console.log("payloadval",payloadval);
-    
-    
+    console.log('payloadval', payloadval);
+
     //return empty strings
     if (a.innerText.trim() === '') return;
 
-    //console.log('mydiv', this.mydiv);
+    console.log('mydiv', this.mydiv);
 
     for (var i = 0; i < this.messages.length; i++)
       if (this.messages[i].buttons === true) this.messages[i].buttons = false;
@@ -155,6 +159,29 @@ export class ChatWidgetComponent implements OnInit {
         }
       }
     });
+  }
+
+  DistinctButtons(Val: any) {
+    var addonce = false;
+
+    for (var i = 0; i < Val.length; i++) {
+      for (var j = 0; j < this.result.length; j++) {
+        if (Val[i].title.title == this.result[j].title.title) {
+          addonce = true;
+        }
+      }
+      this.count++;
+      if (this.count == 1 && addonce == false) {
+        this.result.push(Val[i]);
+      }
+      addonce = false;
+      this.count = 0;
+    }
+    Val = this.result;
+    this.result = [];
+    this.BT = [];
+    this.BT = Val;
+    Val = '';
   }
 
   toggleChat() {
