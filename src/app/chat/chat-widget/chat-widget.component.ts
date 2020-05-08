@@ -23,7 +23,6 @@ export class ChatWidgetComponent implements OnInit {
 
   public messages = [];
   public BT = [];
-  public result = [];
   a: string;
   public val = [];
 
@@ -90,6 +89,11 @@ export class ChatWidgetComponent implements OnInit {
     //User Message
     this.addMessage(this.client, message, 'sent', 'text', false);
 
+    // change button settings
+    this.buttonsettings();
+
+    console.log("BT", this.BT);
+
     this.BotRequestMessage(message);
   }
 
@@ -103,17 +107,19 @@ export class ChatWidgetComponent implements OnInit {
   buttonclick($event: Event) {
     var a = $event.srcElement as HTMLElement;
 
-    console.log('a', a.innerText);
+    console.log('a', a);
     var b = a.innerText.replace(/ +/g, '');
     console.log('b', b);
+
     //To find the right Payload.
     var payloadval: any;
     for (var i = 0; i < this.BT.length; i++) {
       var c = this.BT[i].title.title.replace(/(\r\n|\n|\r)/gm, '');
+      c = c.replace(/ +/g, '');
       console.log('c', c);
       if (c.includes(b)) {
         payloadval = this.BT[i].title.payload;
-        console.log('payloadval', payloadval);
+        console.log('payload', payloadval);
       }
     }
     console.log('payloadval', payloadval);
@@ -121,12 +127,8 @@ export class ChatWidgetComponent implements OnInit {
     //return empty strings
     if (a.innerText.trim() === '') return;
 
-    console.log('mydiv', this.mydiv);
-
-    for (var i = 0; i < this.messages.length; i++)
-      if (this.messages[i].buttons === true) this.messages[i].buttons = false;
-
-    this.BT = [];
+    // change button settings
+    this.buttonsettings();
 
     //User Message
     this.addMessage(this.client, a.innerText, 'sent', 'text', false);
@@ -136,6 +138,8 @@ export class ChatWidgetComponent implements OnInit {
   }
 
   BotRequestMessage(m: any) {
+
+    this.BT = [];
     this.chatservice.botMessageRequest(m).subscribe((res) => {
       this.val = JSON.parse(res);
 
@@ -162,30 +166,21 @@ export class ChatWidgetComponent implements OnInit {
   }
 
   DistinctButtons(Val: any) {
-    var addonce = false;
-
-    for (var i = 0; i < Val.length; i++) {
-      for (var j = 0; j < this.result.length; j++) {
-        if (Val[i].title.title == this.result[j].title.title) {
-          addonce = true;
-        }
-      }
-      this.count++;
-      if (this.count == 1 && addonce == false) {
-        this.result.push(Val[i]);
-      }
-      addonce = false;
-      this.count = 0;
-    }
-    Val = this.result;
-    this.result = [];
+    var distinctbt = Val.filter(function (item, pos) {
+      return Val.indexOf(item) == pos;
+    });
     this.BT = [];
-    this.BT = Val;
-    Val = '';
+    this.BT = distinctbt;
+    distinctbt = '';
   }
 
   toggleChat() {
     console.log('Toggle chat');
     this.visible = !this.visible;
+  }
+
+  buttonsettings(){
+    for (var i = 0; i < this.messages.length; i++)
+    if (this.messages[i].buttons === true) this.messages[i].buttons = false;
   }
 }
