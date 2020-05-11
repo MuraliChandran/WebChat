@@ -164,6 +164,12 @@
   border-radius: 3px;
 }
 
+.chat-message-video {
+  margin-left: 10px;
+  padding: 10px;
+  border-radius: 3px;
+}
+
 /**
   Received message style
    */

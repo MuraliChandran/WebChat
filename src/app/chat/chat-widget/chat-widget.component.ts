@@ -2,7 +2,7 @@ import { Component, OnInit, Input, ViewChild, ElementRef } from '@angular/core';
 import { fadeIn, fadeInOut } from '../animation';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { ChatServicesService } from '../chat-services/chat-services.service';
-
+import { DomSanitizer } from '@angular/platform-browser';
 const rand = (max) => Math.floor(Math.random() * max);
 
 @Component({
@@ -42,7 +42,8 @@ export class ChatWidgetComponent implements OnInit {
 
   constructor(
     public httpClient: HttpClient,
-    private chatservice: ChatServicesService
+    private chatservice: ChatServicesService,
+    private sanitizer: DomSanitizer
   ) {}
 
   ngOnInit(): void {
@@ -92,7 +93,7 @@ export class ChatWidgetComponent implements OnInit {
     // change button settings
     this.buttonsettings();
 
-    console.log("BT", this.BT);
+    console.log('BT', this.BT);
 
     this.BotRequestMessage(message);
   }
@@ -138,7 +139,6 @@ export class ChatWidgetComponent implements OnInit {
   }
 
   BotRequestMessage(m: any) {
-
     this.BT = [];
     this.chatservice.botMessageRequest(m).subscribe((res) => {
       this.val = JSON.parse(res);
@@ -159,7 +159,13 @@ export class ChatWidgetComponent implements OnInit {
         if (this.val[key].image) {
           this.botMessage(this.val[key].image, 'image', false);
         } else {
-          console.log('not working', this.val[key]);
+          console.log('image not working', this.val[key]);
+        }
+
+        if (this.val[key].attachment) {
+          this.botMessage(this.val[key].attachment.payload.src, 'video', false);
+        } else {
+          console.log('video not working', this.val[key]);
         }
       }
     });
@@ -179,8 +185,12 @@ export class ChatWidgetComponent implements OnInit {
     this.visible = !this.visible;
   }
 
-  buttonsettings(){
+  buttonsettings() {
     for (var i = 0; i < this.messages.length; i++)
-    if (this.messages[i].buttons === true) this.messages[i].buttons = false;
+      if (this.messages[i].buttons === true) this.messages[i].buttons = false;
+  }
+
+  getEmbeddedUrl(item) {
+    return this.sanitizer.bypassSecurityTrustResourceUrl(item);
   }
 }

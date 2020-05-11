@@ -31,12 +31,31 @@
                 <img [attr.src]="image" class="chat-message-from-Image" />
               </div>
             </div>
+
+            <div *ngIf="m.type === 'video'">
+              <div>
+                <iframe
+                  [src]="getEmbeddedUrl(m.message)"
+                  width="200"
+                  height="200"
+                  frameborder="0"
+                  style="left: 35px;"
+                  allowfullscreen
+                >
+                </iframe>
+              </div>
+            </div>
           </div>
 
           <ng-container *ngIf="m.buttons === true" #mydiv>
             <div *ngFor="let b of BT">
-              <div  #mydiv>
-                <button mat-raised-button color="warn" (click)="buttonclick($event)" class="button-row">
+              <div #mydiv>
+                <button
+                  mat-raised-button
+                  color="warn"
+                  (click)="buttonclick($event)"
+                  class="button-row"
+                >
                   {{ b.title.title }}
                 </button>
               </div>
